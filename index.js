@@ -129,7 +129,7 @@ MpcAccessory.prototype.setState = function (state, callback) {
             if (state == true) {
 
                 // TODO This is currently only for private use. We should make it configurable in next versions.
-                accessory.client.play("file:/mnt/nas/srv/music/einslive", function (stdout) {
+                accessory.client.play(function (stdout) {
                     callback(null);
                 })
             } else {
