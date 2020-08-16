@@ -36,7 +36,7 @@ MpcClient.prototype.getOutputs = function (callback) {
     });
 };
 
-MpcClient.prototype.play = function (file, callback) {
+MpcClient.prototype.loadAndPlay = function (file, callback) {
     var cmdload = this.getCmd() + 'load ' + file;
     var cmdplay = this.getCmd() + 'play';
 
@@ -47,8 +47,32 @@ MpcClient.prototype.play = function (file, callback) {
     });
 };
 
+MpcClient.prototype.load = function (file, callback) {
+    var cmdload = this.getCmd() + 'load ' + file;
+
+    exec(cmdload, function (error, stdout, stderr) {
+        callback(stdout)
+    });
+};
+
+MpcClient.prototype.play = function (callback) {
+    var cmdplay = this.getCmd() + 'play';
+    
+    exec(cmdplay, function (error, stdout, stderr) {
+        callback(stdout)
+    });
+};
+
 MpcClient.prototype.stop = function (callback) {
     var cmd = this.getCmd() + 'stop';
+
+    exec(cmd, function (error, stdout, stderr) {
+        callback(stdout)
+    });
+};
+
+MpcClient.prototype.pause = function (callback) {
+    var cmd = this.getCmd() + 'pause';
 
     exec(cmd, function (error, stdout, stderr) {
         callback(stdout)
@@ -71,7 +95,8 @@ MpcClient.prototype.getStatus = function (callback) {
 
         var status = {
             volume: 0,
-            playing: false
+            playing: false,
+            paused: false
         };
 
         var regex = /volume:\s*(\d*)\%/;
@@ -85,6 +110,10 @@ MpcClient.prototype.getStatus = function (callback) {
         regex = /\[(playing)\]/;
         result = stdout.match(regex);
         status.playing = (result != null);
+        
+        regex = /\[(paused)\]/;
+        result = stdout.match(regex);
+        status.paused = (result != null);
 
         callback(status)
     });
